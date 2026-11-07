@@ -26,6 +26,27 @@ What it does:
 > Not affiliated with or endorsed by Sony. "Sony", "Alpha" and "Imaging Edge"
 > are trademarks of Sony Group Corporation.
 
+## Install
+
+On macOS, download `AlphaLiveView-…-macOS.zip` from the
+[latest release](https://github.com/z0rzi/alpha-wifi-liveview/releases/latest),
+unzip it, and move Alpha Live View.app to Applications. The same app runs on
+Apple Silicon and Intel Macs.
+
+The app isn't signed with an Apple Developer certificate, so macOS blocks the
+first launch. Open it once, then go to System Settings → Privacy & Security
+and click Open Anyway. If macOS says the app is damaged instead, run this in
+Terminal and open it again:
+
+```sh
+xattr -cr "/Applications/Alpha Live View.app"
+```
+
+When macOS asks whether the app may find devices on your local network,
+allow it, or the app can't see the camera.
+
+There is no prebuilt Linux download yet. See [Build](#build).
+
 ## Camera setup
 
 Do this once:
