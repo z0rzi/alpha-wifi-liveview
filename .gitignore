@@ -1,0 +1,9 @@
+# Build outputs
+viewer/alpha-wifi-liveview
+viewer/build/
+
+# Third-party assets, downloaded (sha256-pinned) by viewer/fetch-assets.sh
+viewer/web/ort/
+viewer/web/*.onnx
+
+.DS_Store
