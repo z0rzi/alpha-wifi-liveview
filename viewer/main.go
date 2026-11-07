@@ -980,8 +980,17 @@ func discover() string {
 
 func cameraLoop(h *hub, fixedHost string, logProps bool) {
 	c := &controller{applied: -1, logProps: logProps} // lives across reconnects (keeps the original focus area)
+	// While the camera refuses us (not paired yet), keep retrying that same
+	// camera and keep the "refused" stage on screen instead of going back to
+	// searching, so the setup guide stays on the pairing step.
+	refusedBy := ""
 	for {
 		host := fixedHost
+		if host == "" && refusedBy != "" && portOpen(refusedBy, time.Second) {
+			host = refusedBy
+		}
+		refused := host != "" && host == refusedBy
+		refusedBy = ""
 		if host == "" {
 			h.setPhase("searching", "Looking for the camera on the network…")
 			host = discover()
@@ -991,7 +1000,9 @@ func cameraLoop(h *hub, fixedHost string, logProps bool) {
 				continue
 			}
 		}
-		h.setPhase("connecting", "Connecting to camera at "+host+"…")
+		if !refused {
+			h.setPhase("connecting", "Connecting to camera at "+host+"…")
+		}
 		// The camera holds its answer while it shows a pairing / OK prompt.
 		prompt := time.AfterFunc(2*time.Second, func() {
 			h.setPhase("confirm", "The camera is asking for confirmation: press OK on the camera.")
@@ -1013,6 +1024,7 @@ func cameraLoop(h *hub, fixedHost string, logProps bool) {
 		}
 		if errors.Is(err, errRefused) {
 			h.setPhase("refused", "The camera refused the connection: start Pairing on the camera.")
+			refusedBy = host
 			time.Sleep(3 * time.Second)
 			continue
 		}
